@@ -8,22 +8,46 @@ function Gameboard() {
   const columns = 3;
   let board = [];
 
-  for (let i = 0; i++; i < rows) {
+  for (let i = 0; i < rows; i++) {
     board[i] = [];
-    for (let j = 0; j++; j < columns) {
-      board[i] = board.push(Cell());
+
+    for (let j = 0; j < columns; j++) {
+      board[i].push(Cell());
     }
   }
 
   const getBoard = () => board;
 
   const markPosition = (row, column, player) => {
-    // check if the chosen position for the mark is free, if not, exit
-    const positionIsAvailable = board[row][column].getValue() === 0;
-    if (!positionIsAvailable) return;
+    // check if the chosen position for the mark is free, if not, return false
 
+    const positionIsAvailable = board[row][column].getValue() === 0;
+
+    if (!positionIsAvailable) {
+      return false;
+    }
     // Otherwise, mark the position with player's sign
     board[row][column].addMark(player);
+    return true;
+  };
+  const checkWin = (player) => {
+    const template = Array(3).fill(player, 0);
+    const boardArr = board.map((row) => row.map((col) => col.getValue()));
+
+    diagonal1 = boardArr.map((a, i) => a[i]);
+    diagonal2 = boardArr.toReversed().map((a, i) => a[i]);
+    transpose = boardArr[0].map((col, i) => boardArr.map((row) => row[i]));
+
+    const matchRow = boardArr.filter((row) => row.toString() == template.toString());
+    const matchCol = transpose.filter((row) => row.toString() == template.toString());
+    const matchDiagonal =
+      diagonal1.toString() == template.toString() ? true : diagonal2.toString() == template.toString();
+
+    if (matchRow.length || matchCol.length || matchDiagonal) {
+      return true;
+    } else {
+      return false;
+    }
   };
 
   const printBoardToConsole = () => {
@@ -32,7 +56,7 @@ function Gameboard() {
   };
 
   //   Exposed interface
-  return { getBoard, markPosition, printBoardToConsole };
+  return { getBoard, markPosition, checkWin, printBoardToConsole };
 }
 
 function Cell() {
@@ -56,11 +80,11 @@ function GameController(playerOneName = "Player One", playerTwoName = "Player Tw
   const players = [
     {
       name: playerOneName,
-      mark: "X",
+      mark: 1,
     },
     {
       name: playerTwoName,
-      mark: "O",
+      mark: 2,
     },
   ];
 
@@ -76,13 +100,22 @@ function GameController(playerOneName = "Player One", playerTwoName = "Player Tw
     console.log(`${getActivePlayer().name}'s turn.`);
   };
 
-  const playRound = (column) => {
-    // Drop a token for the current player
-    console.log(`Dropping ${getActivePlayer().name}'s token into column ${column}...`);
-    board.dropToken(column, getActivePlayer().token);
+  const playRound = (row, column) => {
+    // Add mark for the current player
+    console.log(`Adding ${getActivePlayer().name}'s mark into position (${row}, ${column})...`);
 
+    // If the chosen position is not valid, the current player can attempt again to put its mark.
+    if (!board.markPosition(row, column, getActivePlayer().mark)) {
+      console.log(`${getActivePlayer().name} position not valid, you have to choose another position.`);
+      printNewRound();
+      return;
+    }
     /*  This is where we would check for a winner and handle that logic,
           such as a win message. */
+    if (board.checkWin(getActivePlayer().mark)) {
+      console.log(`${getActivePlayer().name} won the game!!!!!`);
+      return;
+    }
 
     // Switch player turn
     switchPlayerTurn();
