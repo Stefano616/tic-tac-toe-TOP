@@ -1,8 +1,3 @@
-// 1 - Gameboard factory function (IIFE or not)
-// 2 - Cell
-// 3 - GameController
-// 4 - ScreenController
-
 function Gameboard() {
   const rows = 3;
   const columns = 3;
@@ -19,14 +14,11 @@ function Gameboard() {
   const getBoard = () => board;
 
   const markPosition = (row, column, player) => {
-    // check if the chosen position for the mark is free, if not, return false
-
     const positionIsAvailable = board[row][column].getValue() === 0;
 
     if (!positionIsAvailable) {
       return false;
     }
-    // Otherwise, mark the position with player's sign
     board[row][column].addMark(player);
     return true;
   };
@@ -50,13 +42,7 @@ function Gameboard() {
     }
   };
 
-  const printBoardToConsole = () => {
-    const boardWithValues = board.map((row) => row.map((cell) => cell.getValue()));
-    console.log(boardWithValues);
-  };
-
-  //   Exposed interface
-  return { getBoard, markPosition, checkWin, printBoardToConsole };
+  return { getBoard, markPosition, checkWin };
 }
 
 function Cell() {
@@ -69,11 +55,6 @@ function Cell() {
   return { addMark, getValue };
 }
 
-/*
- ** The GameController will be responsible for controlling the
- ** flow and state of the game's turns, as well as whether
- ** anybody has won the game
- */
 function GameController(playerOneName = "Player One", playerTwoName = "Player Two") {
   const board = Gameboard();
 
@@ -95,42 +76,68 @@ function GameController(playerOneName = "Player One", playerTwoName = "Player Tw
   };
   const getActivePlayer = () => activePlayer;
 
-  const printNewRound = () => {
-    board.printBoardToConsole();
-    console.log(`${getActivePlayer().name}'s turn.`);
-  };
-
   const playRound = (row, column) => {
-    // Add mark for the current player
-    console.log(`Adding ${getActivePlayer().name}'s mark into position (${row}, ${column})...`);
-
-    // If the chosen position is not valid, the current player can attempt again to put its mark.
     if (!board.markPosition(row, column, getActivePlayer().mark)) {
-      console.log(`${getActivePlayer().name} position not valid, you have to choose another position.`);
-      printNewRound();
-      return;
-    }
-    /*  This is where we would check for a winner and handle that logic,
-          such as a win message. */
-    if (board.checkWin(getActivePlayer().mark)) {
-      console.log(`${getActivePlayer().name} won the game!!!!!`);
+      alert(`${getActivePlayer().name} position not valid, you have to choose another position.`);
       return;
     }
 
-    // Switch player turn
+    if (board.checkWin(getActivePlayer().mark)) {
+      return;
+    }
+
     switchPlayerTurn();
-    printNewRound();
   };
 
-  // Initial play game message
-  printNewRound();
-
-  // For the console version, we will only use playRound, but we will need
-  // getActivePlayer for the UI version, so I'm revealing it now
   return {
     playRound,
     getActivePlayer,
+    getBoard: board.getBoard,
+    checkWin: board.checkWin,
   };
 }
 
-const game = GameController();
+function ScreenController() {
+  const game = GameController();
+  const gameboard = document.querySelector(".gameboard");
+  const displayPlayerInfo = document.querySelector(".player-info");
+
+  const updateScreen = () => {
+    gameboard.textContent = "";
+
+    const board = game.getBoard();
+    const { name: activePlayerName, mark: activePlayerMark } = game.getActivePlayer();
+
+    if (game.checkWin(activePlayerMark)) {
+      displayPlayerInfo.textContent = `${activePlayerName} won the game!!!!!`;
+      return;
+    }
+
+    displayPlayerInfo.textContent = `${activePlayerName}'s turn...`;
+
+    board.forEach((row, rowIdx) => {
+      row.forEach((cell, colIdx) => {
+        const cellButton = document.createElement("button");
+        cellButton.classList.add("gameboard__cell");
+        cellButton.dataset.row = rowIdx;
+        cellButton.dataset.column = colIdx;
+        cellButton.textContent = cell.getValue() == 1 ? "X" : cell.getValue() == 2 ? "O" : " ";
+        gameboard.appendChild(cellButton);
+      });
+    });
+  };
+
+  function clickHandlerBoard(e) {
+    const selectedRow = e.target.dataset.row;
+    const selectedColumn = e.target.dataset.column;
+
+    if (!selectedColumn) return;
+
+    game.playRound(selectedRow, selectedColumn);
+    updateScreen();
+  }
+  gameboard.addEventListener("click", clickHandlerBoard);
+  updateScreen();
+}
+
+ScreenController();
