@@ -98,6 +98,7 @@ function ScreenController() {
   const gameboard = document.querySelector(".gameboard");
   const displayPlayerInfo = document.querySelector(".player-info");
   const startBtn = document.querySelector(".start-btn");
+  const playersNames = document.querySelectorAll(".player-input__input");
 
   const updateScreen = () => {
     gameboard.textContent = "";
@@ -115,7 +116,9 @@ function ScreenController() {
     });
   };
   function clickHandlerStartBtn() {
-    game = GameController();
+    game = GameController(playersNames[0].value, playersNames[1].value);
+    console.log(playersNames[0].value);
+    playersNames.forEach((input) => input.setAttribute("disabled", ""));
     updateScreen();
     startBtn.textContent = "Restart";
   }

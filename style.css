@@ -17,6 +17,27 @@
   justify-content: space-around;
   padding-block: 2rem;
 }
+.players-name-container {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-bottom: 1rem;
+}
+
+.player-input {
+  margin: 0.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 1.5rem;
+}
+
+.player-input__input {
+  font-size: inherit;
+  margin-left: 0.2rem;
+  padding: 0.2rem;
+}
 
 .start-btn {
   padding: 0.5rem;

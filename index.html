@@ -9,8 +9,30 @@
   </head>
   <body>
     <div class="container">
+      <div class="players-name-container">
+        <div class="player-input">
+          <label for="first-player-name" class="player-input__label">Player One's name:</label
+          ><input
+            id="first-player-name"
+            class="player-input__input"
+            type="text"
+            placeholder="Player One"
+            value="Player One"
+          />
+        </div>
+        <div class="player-input">
+          <label for="second-player-name" class="player-input__label">Player Two's name:</label
+          ><input
+            id="second-player-name"
+            class="player-input__input"
+            type="text"
+            placeholder="Player Two"
+            value="Player Two"
+          />
+        </div>
+      </div>
       <button class="start-btn">Start</button>
-      <h1 class="player-info">Player One's turn</h1>
+      <h1 class="player-info"></h1>
       <div class="gameboard"></div>
     </div>
   </body>
