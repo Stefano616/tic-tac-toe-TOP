@@ -37,7 +37,16 @@ function Gameboard() {
       return false;
     }
   };
-  return { getBoard, markPosition, checkWin };
+  const checkTie = () => {
+    const availablePosition = board
+      .map((row) => row.map((col) => col.getValue()))
+      .flat()
+      .includes(0);
+    console.log(availablePosition);
+    if (!availablePosition) return true;
+    return false;
+  };
+  return { getBoard, markPosition, checkWin, checkTie };
 }
 
 function Cell() {
@@ -79,6 +88,10 @@ function GameController(playerOneName = "Player One", playerTwoName = "Player Tw
     }
     if (board.checkWin(getActivePlayer().mark)) {
       infoMessage = `${getActivePlayer().name} won the game!!!!!`;
+      return;
+    }
+    if (board.checkTie()) {
+      infoMessage = `It's a Tie!!!!!`;
       return;
     }
     switchPlayerTurn();
