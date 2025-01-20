@@ -18,6 +18,13 @@
   padding-block: 2rem;
 }
 
+.start-btn {
+  padding: 0.5rem;
+  margin-bottom: 1rem;
+  font-size: 1.5rem;
+  border-radius: 15px;
+}
+
 .gameboard {
   display: grid;
   grid-template-columns: repeat(3, 1fr);

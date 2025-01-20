@@ -94,17 +94,15 @@ function GameController(playerOneName = "Player One", playerTwoName = "Player Tw
 }
 
 function ScreenController() {
-  const game = GameController();
+  let game = "";
   const gameboard = document.querySelector(".gameboard");
   const displayPlayerInfo = document.querySelector(".player-info");
+  const startBtn = document.querySelector(".start-btn");
 
   const updateScreen = () => {
     gameboard.textContent = "";
-
     const board = game.getBoard();
-
     displayPlayerInfo.textContent = game.getInfoMessage();
-
     board.forEach((row, rowIdx) => {
       row.forEach((cell, colIdx) => {
         const cellButton = document.createElement("button");
@@ -116,18 +114,21 @@ function ScreenController() {
       });
     });
   };
+  function clickHandlerStartBtn() {
+    game = GameController();
+    updateScreen();
+    startBtn.textContent = "Restart";
+  }
 
   function clickHandlerBoard(e) {
     const selectedRow = e.target.dataset.row;
     const selectedColumn = e.target.dataset.column;
-
     if (!selectedColumn) return;
-
     game.playRound(selectedRow, selectedColumn);
     updateScreen();
   }
+  startBtn.addEventListener("click", clickHandlerStartBtn);
   gameboard.addEventListener("click", clickHandlerBoard);
-  updateScreen();
 }
 
 ScreenController();
