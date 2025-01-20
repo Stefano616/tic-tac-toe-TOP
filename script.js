@@ -2,20 +2,16 @@ function Gameboard() {
   const rows = 3;
   const columns = 3;
   let board = [];
-
   for (let i = 0; i < rows; i++) {
     board[i] = [];
-
     for (let j = 0; j < columns; j++) {
       board[i].push(Cell());
     }
   }
-
   const getBoard = () => board;
 
   const markPosition = (row, column, player) => {
     const positionIsAvailable = board[row][column].getValue() === 0;
-
     if (!positionIsAvailable) {
       return false;
     }
@@ -41,7 +37,6 @@ function Gameboard() {
       return false;
     }
   };
-
   return { getBoard, markPosition, checkWin };
 }
 
@@ -70,7 +65,6 @@ function GameController(playerOneName = "Player One", playerTwoName = "Player Tw
       mark: 2,
     },
   ];
-
   let activePlayer = players[0];
 
   const switchPlayerTurn = () => {
@@ -81,7 +75,6 @@ function GameController(playerOneName = "Player One", playerTwoName = "Player Tw
   const playRound = (row, column) => {
     if (!board.markPosition(row, column, getActivePlayer().mark)) {
       infoMessage = `${getActivePlayer().name} position not valid, you have to choose another position.`;
-      // alert(`${getActivePlayer().name} position not valid, you have to choose another position.`);
       return;
     }
     if (board.checkWin(getActivePlayer().mark)) {
@@ -91,7 +84,6 @@ function GameController(playerOneName = "Player One", playerTwoName = "Player Tw
     switchPlayerTurn();
     infoMessage = `${getActivePlayer().name}'s turn...`;
   };
-
   infoMessage = `${getActivePlayer().name}'s turn...`;
 
   return {
