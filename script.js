@@ -57,6 +57,8 @@ function Cell() {
 
 function GameController(playerOneName = "Player One", playerTwoName = "Player Two") {
   const board = Gameboard();
+  let infoMessage = "";
+  const getInfoMessage = () => infoMessage;
 
   const players = [
     {
@@ -78,22 +80,24 @@ function GameController(playerOneName = "Player One", playerTwoName = "Player Tw
 
   const playRound = (row, column) => {
     if (!board.markPosition(row, column, getActivePlayer().mark)) {
-      alert(`${getActivePlayer().name} position not valid, you have to choose another position.`);
+      infoMessage = `${getActivePlayer().name} position not valid, you have to choose another position.`;
+      // alert(`${getActivePlayer().name} position not valid, you have to choose another position.`);
       return;
     }
-
     if (board.checkWin(getActivePlayer().mark)) {
+      infoMessage = `${getActivePlayer().name} won the game!!!!!`;
       return;
     }
-
     switchPlayerTurn();
+    infoMessage = `${getActivePlayer().name}'s turn...`;
   };
+
+  infoMessage = `${getActivePlayer().name}'s turn...`;
 
   return {
     playRound,
-    getActivePlayer,
     getBoard: board.getBoard,
-    checkWin: board.checkWin,
+    getInfoMessage,
   };
 }
 
@@ -106,14 +110,8 @@ function ScreenController() {
     gameboard.textContent = "";
 
     const board = game.getBoard();
-    const { name: activePlayerName, mark: activePlayerMark } = game.getActivePlayer();
 
-    if (game.checkWin(activePlayerMark)) {
-      displayPlayerInfo.textContent = `${activePlayerName} won the game!!!!!`;
-      return;
-    }
-
-    displayPlayerInfo.textContent = `${activePlayerName}'s turn...`;
+    displayPlayerInfo.textContent = game.getInfoMessage();
 
     board.forEach((row, rowIdx) => {
       row.forEach((cell, colIdx) => {
